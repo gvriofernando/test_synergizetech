@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"log"
 
-	"gorm.io/driver/mysql"
+	// "gorm.io/driver/mysql"
+	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
-	"gorm.io/gorm/logger"
 	"gorm.io/gorm/schema"
 )
 
@@ -29,7 +29,21 @@ func Init(cfg Config) *gorm.DB {
 	port := cfg.Port
 	database := cfg.Database
 
-	connectionString := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local",
+	// connectionString := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=True&loc=Local",
+	// 	user,
+	// 	password,
+	// 	host,
+	// 	port,
+	// 	database,
+	// )
+
+	// db, err = gorm.Open(mysql.Open(connectionString), &gorm.Config{
+	// 	NamingStrategy: schema.NamingStrategy{
+	// 		NoLowerCase: true,
+	// 	},
+	// 	Logger: logger.Default.LogMode(logger.Info),
+	// })
+	connectionString := fmt.Sprintf("user=%s password=%s host=%s port=%s dbname=%s sslmode=disable",
 		user,
 		password,
 		host,
@@ -37,11 +51,10 @@ func Init(cfg Config) *gorm.DB {
 		database,
 	)
 
-	db, err = gorm.Open(mysql.Open(connectionString), &gorm.Config{
+	db, err = gorm.Open(postgres.Open(connectionString), &gorm.Config{
 		NamingStrategy: schema.NamingStrategy{
 			NoLowerCase: true,
 		},
-		Logger: logger.Default.LogMode(logger.Info),
 	})
 	if err != nil {
 		log.Fatalln("failed to connect database")

@@ -10,6 +10,7 @@ import (
 	"github.com/gin-gonic/gin"
 	apiService "github.com/gvriofernando/test_synergizetech/app"
 	"github.com/gvriofernando/test_synergizetech/config/gorm"
+	dbmigration "github.com/gvriofernando/test_synergizetech/config/gorm/db_migration"
 	"github.com/gvriofernando/test_synergizetech/config/header"
 	"github.com/gvriofernando/test_synergizetech/config/redis"
 	"github.com/joho/godotenv"
@@ -60,9 +61,18 @@ func main() {
 		Database: dbName,
 	})
 	if err != nil {
-		log.Println("Failed initiating Postgres database", "errorMsg", err.Error())
+		log.Println("Failed initiating database", "errorMsg", err.Error())
 	}
 	fmt.Println("Database initiation successful")
+
+	//DB Migration
+	err = dbmigration.DBMigrate(dbmigration.Config{
+		Db: dbCon,
+	})
+	if err != nil {
+		log.Println("Failed Migrating database", "errorMsg", err.Error())
+	}
+	fmt.Println("DB Migration successful")
 
 	// Initiate Gin Router
 	httpS := gin.Default()

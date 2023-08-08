@@ -29,7 +29,7 @@ func NewStore(cfg Config) Store {
 
 func (s Store) GetDetailPlayer(ctx context.Context, playerId string) (res Player, err error) {
 	db := s.db
-	query := db.Table("player").Where("player_id = ?", playerId).Find(&res)
+	query := db.Table("players").Where("player_id = ?", playerId).Find(&res)
 	if query.Error != nil {
 		log.Printf("Error get player detail with id %s : %s", playerId, query.Error)
 		return Player{}, query.Error
@@ -40,7 +40,7 @@ func (s Store) GetDetailPlayer(ctx context.Context, playerId string) (res Player
 
 func (s Store) GetAllPlayers(ctx context.Context, req GetAllPlayersRequest) (res []Player, err error) {
 	db := s.db
-	query := db.Table("player")
+	query := db.Table("players")
 
 	if req.PlayerId != "" {
 		query = query.Where("player_id = ?", req.PlayerId)
@@ -72,7 +72,7 @@ func (s Store) GetAllPlayers(ctx context.Context, req GetAllPlayersRequest) (res
 }
 
 func (s Store) AddBankAccount(ctx context.Context, req AddBankAccountRequest) (err error) {
-	query := s.db.Table("player")
+	query := s.db.Table("players")
 
 	query = query.Where("player_id = ?", req.PlayerId).Updates(map[string]interface{}{
 		"bank_name":      req.BankName,
@@ -84,7 +84,7 @@ func (s Store) AddBankAccount(ctx context.Context, req AddBankAccountRequest) (e
 }
 
 func (s Store) TopUpWalletRequest(ctx context.Context, playerId string, walletAmount float64) (err error) {
-	query := s.db.Table("player")
+	query := s.db.Table("players")
 
 	query = query.Where("player_id = ?", playerId).Updates(map[string]interface{}{
 		"wallet": walletAmount,
@@ -94,7 +94,7 @@ func (s Store) TopUpWalletRequest(ctx context.Context, playerId string, walletAm
 }
 
 func (s Store) Register(ctx context.Context, req Player) (err error) {
-	query := s.db.Table("player")
+	query := s.db.Table("players")
 
 	query = query.Create(&req)
 	if query.Error != nil {
